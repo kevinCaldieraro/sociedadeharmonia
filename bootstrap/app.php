@@ -36,8 +36,8 @@ return Application::configure(basePath: dirname(__DIR__))
         );
     })
     ->withSchedule(function (Schedule $schedule) {
-        $schedule->command('app:update-subscription-statuses')->monthlyOn(16, '4:00');
-        $schedule->command('app:start-month-tasks')->monthlyOn(1, '4:00');
+        $schedule->command('app:run-maintenance start-month')->monthlyOn(1, '00:00');
+        $schedule->command('app:run-maintenance update-statuses')->monthlyOn(16, '00:00');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
