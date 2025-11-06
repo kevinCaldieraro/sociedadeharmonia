@@ -10,6 +10,8 @@
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
+    @inertiaHead
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
@@ -26,7 +28,6 @@
     <!-- Scripts -->
     @routes
     @vite(['resources/js/app.js'])
-    @inertiaHead
 </head>
 
 <body class="font-sans antialiased h-full bg-surface-100 dark:bg-surface-950">
