@@ -116,6 +116,8 @@ class Patrimonial implements MemberInterface
             ->exists();
 
         if (!$subscriptionMonthExists) {
+            $status = 'pendente';
+
             if ($currDate->day > 15) {
                 $status = 'vencida';
             }
