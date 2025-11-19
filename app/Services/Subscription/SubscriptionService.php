@@ -12,10 +12,6 @@ class SubscriptionService
 {
     public function registerPayment(array $data): SubscriptionMonthMember
     {
-        if ($data['value'] !== 79.9) {
-            throw new DomainException('Valor do pagamento não corresponde ao valor da assinatura.');
-        }
-
         $subscriptionEntity = new Subscription($data);
         $subscriptionMonthMember = $subscriptionEntity->registerPayment();
         $subscriptionMonthMember = $subscriptionMonthMember->fresh([

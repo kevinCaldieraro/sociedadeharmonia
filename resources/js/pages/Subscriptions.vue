@@ -74,11 +74,13 @@ const monthSubscription = ref();
 const formRegisterPayment = useForm({
     id: null,
     idSubscription: null,
-    value: 79.90,
+    value: null,
     paid_at: null,
     payment_method: '',
     payment_proof_link: '',
 });
+const isPaydAtFocused = ref(false);
+const isValuePaymentFocused = ref(false);
 
 const openDialogRegisterPayment = (dataSubscription) => {
     const currDate = new Date();
@@ -316,6 +318,9 @@ onMounted(() => {
                             slotChar="dd/mm/yyyy"
                             :invalid="Boolean(formRegisterPayment.errors?.paid_at)"
                             fluid
+                            @focus="isPaydAtFocused = true"
+                            @blur="isPaydAtFocused = false"
+                            :placeholder="isPaydAtFocused ? 'dd/mm/yyyy' : null"
                         />
                         <label for="paid_at">Data do Pagamento</label>
                     </FloatLabel>
@@ -336,10 +341,12 @@ onMounted(() => {
                             inputId="value"
                             mode="currency"
                             currency="BRL"
+                            @focus="isValuePaymentFocused = true"
+                            @blur="isValuePaymentFocused = false"
+                            :placeholder="isValuePaymentFocused ? 'R$ ' : null"
                             required
                             :invalid="Boolean(formRegisterPayment.errors?.value)"
                             fluid
-                            disabled
                         />
                         <label for="value">Valor</label>
                     </FloatLabel>
