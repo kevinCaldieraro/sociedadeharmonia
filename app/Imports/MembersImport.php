@@ -23,7 +23,7 @@ class MembersImport implements OnEachRow
         'rua' => 'street',
         'número' => 'number',
         'tipo' => 'type_member',
-        'data de adesao' => 'join_date',
+        'data de adesão' => 'join_date',
         'data de compra do título' => 'patrimonial_purchase_date',
         'valor do título' => 'patrimonial_value',
         'parentesco' => 'relationship',
@@ -32,7 +32,7 @@ class MembersImport implements OnEachRow
     private array $typeMap = [
         'patrimonial' => 'patrimonial',
         'agregado' => 'affiliated',
-        'conjuge' => 'patrimonial_spouse',
+        'cônjuge' => 'patrimonial_spouse',
     ];
     private array $patrimonials;
     private array $affiliates;
@@ -77,7 +77,6 @@ class MembersImport implements OnEachRow
     {
         $formattedRow = collect($this->headers)
             ->combine($rowArray)
-            ->filter(fn($header) => $header !== null && $header !== '')
             ->mapWithKeys(function ($value, $key) {
                 $mappedKey = $this->columnMap[$key] ?? $key;
 
@@ -86,7 +85,18 @@ class MembersImport implements OnEachRow
                 }
 
                 if (in_array($mappedKey, ['birth_date', 'patrimonial_purchase_date', 'join_date']) && !empty($value)) {
-                    $value = Date::excelToDateTimeObject($value)->format('Y-m-d');
+                    if (is_numeric($value)) {
+                        $value = Date::excelToDateTimeObject($value)->format('Y-m-d');
+                    } else {
+                        $clean = str_replace('/', '-', trim($value));
+                        $timestamp = strtotime($clean);
+
+                        $value = date('Y-m-d', $timestamp);
+                    }
+                }
+
+                if (in_array($mappedKey, ['patrimonial_value']) && !is_numeric($value)) {
+                    $value = $this->normalizeCurrency($value);
                 }
 
                 return [$mappedKey => $value];
@@ -119,5 +129,17 @@ class MembersImport implements OnEachRow
                 $this->service->register($member);
             }
         }
+    }
+
+    private function normalizeCurrency($value)
+    {
+        $value = str_replace(['R$', ' ', '.'], '', $value);
+        $value = str_replace(',', '.', $value);
+
+        if (is_numeric($value)) {
+            return floatval($value);
+        }
+
+        return null;
     }
 }

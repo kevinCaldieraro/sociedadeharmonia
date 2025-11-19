@@ -31,7 +31,11 @@ class Subscription
             $joinDate = $joinDate->addMonth();
         }
 
-        for ($currMonth = $date->month; $joinDate->month <= $currMonth; $joinDate->addMonth()) {
+        for (
+            $currDate = $date;
+            $joinDate->month <= $currDate->month || $joinDate->year < $currDate->year;
+            $joinDate->addMonth()
+        ) {
             $status = 'pendente';
             $expiration_date = Carbon::create(
                 $joinDate->year,
@@ -39,7 +43,7 @@ class Subscription
                 15
             );
 
-            if ($joinDate->month < $currMonth || $date->day > 15) {
+            if ($joinDate->month < $currDate->month || $date->day > 15 || $joinDate->year < $currDate->year) {
                 $status = 'vencida';
             }
     
