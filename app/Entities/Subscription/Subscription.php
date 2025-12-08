@@ -33,7 +33,7 @@ class Subscription
 
         for (
             $currDate = $date;
-            $joinDate->month <= $currDate->month || $joinDate->year < $currDate->year;
+            $joinDate->lessThanOrEqualTo($currDate);
             $joinDate->addMonth()
         ) {
             $status = 'pendente';
