@@ -39,7 +39,7 @@ class SubscriptionController extends Controller
             'monthSubscriptions' => $subscriptions,
             'months' => $months,
             'status' => $status,
-            'currentYear' => $year,
+            'year' => $year,
         ]);
     }
 

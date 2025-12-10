@@ -7,7 +7,7 @@ import { FilterMatchMode } from '@primevue/core/api';
 import { computed, onMounted, ref } from 'vue';
 import { BadgeCheck, Check, DollarSign, Search, X } from 'lucide-vue-next';
 import { useForm, usePage } from '@inertiajs/vue3';
-import { Tag, useToast } from 'primevue';
+import { InputMask, InputText, Tag, useToast } from 'primevue';
 import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 import Loading from '@/components/utils/Loading.vue';
@@ -39,6 +39,7 @@ const filters = ref({
     'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
 });
 const page = usePage();
+const selectedYear = ref(null);
 const selectedMonths = ref([]);
 const selectedStatus = ref([]);
 const monthSubscriptions = ref([]);
@@ -160,7 +161,8 @@ const getSeverityStatus = (status) => {
 const search = () => {
     const months = selectedMonths.value.map(m => m.code);
     const status = selectedStatus.value.map(s => s.code);
-    router.get(route('subscriptions.index'), { months, status, year: 2025 })
+    const year = !selectedYear.value ? 2025 : selectedYear.value;
+    router.get(route('subscriptions.index'), { months, status, year });
 }
 
 const numberFormat = (value, decimals = 2, decPoint = ',', thousandsSep = '.') => {
@@ -190,6 +192,7 @@ onMounted(() => {
     monthSubscriptions.value = page.props.monthSubscriptions;
     selectedMonths.value = monthsOptions.filter(month => page.props.months.includes(month.code));
     selectedStatus.value = statusOptions.filter(status => page.props.status.includes(status.code));
+    selectedYear.value = page.props.year;
 });
 </script>
 
@@ -223,6 +226,12 @@ onMounted(() => {
             <template #header>
                 <div class="flex flex-wrap gap-2 items-center justify-between">
                     <div class="flex gap-2">
+                        <InputText
+                            v-model="selectedYear"
+                            placeholder="Ano"
+                            style="width: 120px;"
+                            v-keyfilter.int
+                        />
                         <MultiSelect
                             v-model="selectedMonths"
                             :options="monthsOptions"
